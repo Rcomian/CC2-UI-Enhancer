@@ -1925,8 +1925,9 @@ function render_vehicle_tooltip(w, h, vehicle)
         update_ui_image(cx, 2, vehicle_definition_region, color8(255, 255, 255, 255), 0)
         cx = cx + 18
 
-        update_ui_text(cx, 6, vehicle_definition_name, 124, 0, color8(255, 255, 255, 255), 0)
-        cx = cx + update_ui_get_text_size(vehicle_definition_name, 10000, 0) + 2
+		local display_name = tostring(vehicle:get_id()) .. ":" .. vehicle_definition_name
+        update_ui_text(cx, 6, display_name, 124, 0, color8(255, 255, 255, 255), 0)
+        cx = cx + update_ui_get_text_size(display_name, 10000, 0) + 2
     else
         update_ui_image(cx, 2, atlas_icons.icon_chassis_16_wheel_small, color_inactive, 0)
         cx = cx + 18

@@ -454,7 +454,7 @@ function tab_map_render(screen_w, screen_h, x, y, w, h, delta_time, is_active)
             local position_xz = tile:get_position_xz()
             local island_name = tile:get_name()
             local label_x, label_y = world_to_screen(position_xz:x(), position_xz:y() + 3000)
-            update_ui_text(label_x - 64, label_y - 9, island_name, 128, 1, tile_color, 0)
+            update_ui_text(label_x - 64, label_y - 9, tostring(tile:get_id()) .. ":" .. island_name, 128, 1, tile_color, 0)
         end
     else
         for _, tile in iter_tiles() do
