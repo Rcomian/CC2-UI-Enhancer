@@ -1,4 +1,5 @@
 g_animation_time = 0
+g_beep_next = 0
 g_is_beep = false
 
 function begin()
@@ -34,8 +35,13 @@ function update(screen_w, screen_h, ticks)
     end
     
     if g_is_beep then
-        g_is_beep = false
-        update_play_sound(7)
+        if g_animation_time > g_beep_next then
+            g_beep_next = g_animation_time + 10 -- beep interval in ticks
+            g_is_beep = false
+            update_play_sound(e_audio_effect_type.telemetry_5)
+        end
+    else
+        g_beep_next = g_animation_time
     end
 end
 
@@ -119,9 +125,7 @@ function render_attachment_info(x, y, w, h, attachment)
                 if ammo_remaining > 0 then
                     render_status_label(2, h - 15, w - 4, 13, update_get_loc(e_loc.upp_tracking), color_status_bad, is_blink_on(5))
 
-                    if is_blink_on(5, true) then
-                        g_is_beep = true
-                    end
+                    g_is_beep = true
                 else
                     render_status_label(2, h - 15, w - 4, 13, update_get_loc(e_loc.upp_empty), color_status_bad, true)
                 end
@@ -196,6 +200,8 @@ function is_blink_on(rate, is_pulse)
     if is_pulse == nil or is_pulse == false then
         return g_animation_time % (2 * rate) > rate
     else
+        -- This doesn't work because "g_animation_time" is incremented by "ticks" each update, not by 1.
+        -- As such, the value "g_animation_time" is almost never anything that will cause the following line to evaluate to true
         return g_animation_time % (2 * rate) == 0
     end
 end
