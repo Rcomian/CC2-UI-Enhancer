@@ -114,12 +114,23 @@ function update(screen_w, screen_h, ticks)
         end
 
         if is_pressed and selected_bay_index ~= -1 then
-            g_screen_index = 1
-            g_selected_bay_index = selected_bay_index
+            -- Make sure the vehicle is fully docked before it can be interacted with
+            local attached_vehicle = update_get_map_vehicle_by_id(this_vehicle:get_attached_vehicle_id(selected_bay_index))
+            if not attached_vehicle:get() or attached_vehicle:get_dock_state() == e_vehicle_dock_state.docked then
+                g_screen_index = 1
+                g_selected_bay_index = selected_bay_index
+            end
         end
 
         ui:end_window()
     else
+        local attached_vehicle = update_get_map_vehicle_by_id(this_vehicle:get_attached_vehicle_id(g_selected_bay_index))
+
+        -- This handles an edge case where a player has clicked on an empty slot and then a vehicle begins to dock into that slot
+        if attached_vehicle:get() and attached_vehicle:get_dock_state() ~= e_vehicle_dock_state.docked then
+            g_screen_index = 0
+        end
+
         update_add_ui_interaction(update_get_loc(e_loc.interaction_back), e_game_input.back)
 
          -- title
@@ -131,7 +142,6 @@ function update(screen_w, screen_h, ticks)
 
         update_ui_rectangle(0, 92, screen_w, 1, color_white)
 
-        local attached_vehicle = update_get_map_vehicle_by_id(this_vehicle:get_attached_vehicle_id(g_selected_bay_index))
         local is_show_attachment_selector = false
 
         if g_screen_index == 1 then
